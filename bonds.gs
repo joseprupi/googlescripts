@@ -51,13 +51,13 @@ function PRICEZEROCOUPONBOND(discountingDepositPoints, //discounting curve
   
   for (var i = 0; i < discountingFuturePoints.length; i++){
     var point ={
-	    "type": "Future",
-	    "Rate": discountingFuturePoints[i][0],
-	    "FutureStartDate": discountingFuturePoints[i][1],
-	    "FutMonths": discountingFuturePoints[i][2],
-	    "Calendar": discountingFuturePoints[i][3],
-	    "BusinessDayConvention": discountingFuturePoints[i][4],
-	    "DayCounter": discountingFuturePoints[i][5]
+      "type": "Future",
+      "Rate": discountingFuturePoints[i][0],
+      "FutureStartDate": discountingFuturePoints[i][1],
+      "FutMonths": discountingFuturePoints[i][2],
+      "Calendar": discountingFuturePoints[i][3],
+      "BusinessDayConvention": discountingFuturePoints[i][4],
+      "DayCounter": discountingFuturePoints[i][5]
     }
     DiscountPoints.push(point);
   }
@@ -240,13 +240,13 @@ function PRICEZEFIXEDRATEBOND(discountingDepositPoints, //discounting curve
   
   for (var i = 0; i < discountingFuturePoints.length; i++){
     var point ={
-	    "type": "Future",
-	    "Rate": discountingFuturePoints[i][0],
-	    "FutureStartDate": discountingFuturePoints[i][1],
-	    "FutMonths": discountingFuturePoints[i][2],
-	    "Calendar": discountingFuturePoints[i][3],
-	    "BusinessDayConvention": discountingFuturePoints[i][4],
-	    "DayCounter": discountingFuturePoints[i][5]
+      "type": "Future",
+      "Rate": discountingFuturePoints[i][0],
+      "FutureStartDate": discountingFuturePoints[i][1],
+      "FutMonths": discountingFuturePoints[i][2],
+      "Calendar": discountingFuturePoints[i][3],
+      "BusinessDayConvention": discountingFuturePoints[i][4],
+      "DayCounter": discountingFuturePoints[i][5]
     }
     DiscountPoints.push(point);
   }
@@ -477,13 +477,13 @@ function PRICEFLOATINGRATEBOND(discountingDepositPoints, //discounting curve
   
   for (var i = 0; i < discountingFuturePoints.length; i++){
     var point ={
-	    "type": "Future",
-	    "Rate": discountingFuturePoints[i][0],
-	    "FutureStartDate": discountingFuturePoints[i][1],
-	    "FutMonths": discountingFuturePoints[i][2],
-	    "Calendar": discountingFuturePoints[i][3],
-	    "BusinessDayConvention": discountingFuturePoints[i][4],
-	    "DayCounter": discountingFuturePoints[i][5]
+      "type": "Future",
+      "Rate": discountingFuturePoints[i][0],
+      "FutureStartDate": discountingFuturePoints[i][1],
+      "FutMonths": discountingFuturePoints[i][2],
+      "Calendar": discountingFuturePoints[i][3],
+      "BusinessDayConvention": discountingFuturePoints[i][4],
+      "DayCounter": discountingFuturePoints[i][5]
     }
     DiscountPoints.push(point);
   }
@@ -572,13 +572,13 @@ function PRICEFLOATINGRATEBOND(discountingDepositPoints, //discounting curve
   
   for (var i = 0; i < fwdFuturePoints.length; i++){
     var point ={
-	    "type": "Future",
-	    "Rate": fwdFuturePoints[i][0],
-	    "FutureStartDate": fwdFuturePoints[i][1],
-	    "FutMonths": fwdFuturePoints[i][2],
-	    "Calendar": fwdFuturePoints[i][3],
-	    "BusinessDayConvention": fwdFuturePoints[i][4],
-	    "DayCounter": fwdFuturePoints[i][5]
+      "type": "Future",
+      "Rate": fwdFuturePoints[i][0],
+      "FutureStartDate": fwdFuturePoints[i][1],
+      "FutMonths": fwdFuturePoints[i][2],
+      "Calendar": fwdFuturePoints[i][3],
+      "BusinessDayConvention": fwdFuturePoints[i][4],
+      "DayCounter": fwdFuturePoints[i][5]
     }
     ForecastingPoints.push(point);
   }

@@ -141,3 +141,16 @@ function GETDATEGENERATIONRULES() {
   return JSON.parse(responseValue).message.DateGenerationRule;
 }
 
+function GETOVERNIGHTINDEX() {
+  
+  var options = {
+   'method' : 'post',
+   'contentType': 'application/json',
+ };
+  
+  var response = UrlFetchApp.fetch('https://api.quantra.io/getOvernightIndex', options);
+  var responseValue = response.getContentText();
+  
+  return JSON.parse(responseValue).message.OvernightIndex;
+}
+

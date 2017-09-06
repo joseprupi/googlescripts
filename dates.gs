@@ -386,3 +386,33 @@ function NEXTIMMDATE(date) {
   
   return output;
 }
+
+function YEARFRACTION(startDate, endDate, dayCounter) {
+  
+  var data = {
+     "StartDate":startDate,
+     "EndDate":endDate,
+     "DayCounter":dayCounter,
+  }
+  
+  var options = {
+   'method' : 'post',
+   'contentType': 'application/json',
+   'payload' : JSON.stringify(data)
+ };
+  
+  var response = UrlFetchApp.fetch('https://api.quantra.io/yearFraction', options);
+  var responseValue = response.getContentText();
+  
+  var output = new Array();
+  
+  if(JSON.parse(responseValue).response == "ko"){
+    output = JSON.parse(responseValue).message;
+    output = JSON.stringify(output);
+  }else{
+    var responseArray = JSON.parse(responseValue).message;
+    output[0] = responseArray["YearFraction"];
+  }
+  
+  return output;
+}

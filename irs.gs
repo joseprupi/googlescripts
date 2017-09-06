@@ -3,17 +3,23 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
                           discountingFuturePoints,  //discounting curve
                           discountingSwapPoints,    //discounting curve
                           discountingBondPoints,    //discounting curve
-                          discountingCompounding,   //discounting curve
+                          discountingOIS,           //discounting curve
+                          discountingDatedOIS,      //discounting curve
+                          discountingJumps,      //discounting curve
                           discountingDayCounter,    //discounting curve
                           discountingInterpolator,  //discounting curve
+                          discountingBootstrapTrait,  //discounting curve
                           fwdDepositPoints,         //fwd curve
                           fwdFRAPoints,             //fwd curve
                           fwdFuturePoints,          //fwd curve
                           fwdSwapPoints,            //fwd curve
                           fwdBondPoints,            //fwd curve
-                          fwdCompounding,           //fwd curve
+                          fwdOIS,           //fwd curve
+                          fwdDatedOIS,      //fwd curve
+                          fwdJumps,                 //fwd curve
                           fwdDayCounter,            //fwd curve
                           fwdInterpolator,          //fwd curve
+                          fwdBootstrapTrait,  //discounting curve
                           swapStartDate,            //swap
                           swapLenghtInYears,        //swap
                           swapNotional,             //swap
@@ -43,6 +49,7 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
                          ){
   
   var DiscountPoints = new Array();
+  var discountingJumpsArray = new Array();
   
   for (var i = 0; i < discountingDepositPoints.length; i++){
     var point ={
@@ -74,13 +81,13 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
   
   for (var i = 0; i < discountingFuturePoints.length; i++){
     var point ={
-	    "type": "Future",
-	    "Rate": discountingFuturePoints[i][0],
-	    "FutureStartDate": discountingFuturePoints[i][1],
-	    "FutMonths": discountingFuturePoints[i][2],
-	    "Calendar": discountingFuturePoints[i][3],
-	    "BusinessDayConvention": discountingFuturePoints[i][4],
-	    "DayCounter": discountingFuturePoints[i][5]
+      "type": "Future",
+      "Rate": discountingFuturePoints[i][0],
+      "FutureStartDate": discountingFuturePoints[i][1],
+      "FutMonths": discountingFuturePoints[i][2],
+      "Calendar": discountingFuturePoints[i][3],
+      "BusinessDayConvention": discountingFuturePoints[i][4],
+      "DayCounter": discountingFuturePoints[i][5]
     }
     DiscountPoints.push(point);
   }
@@ -125,20 +132,62 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
     DiscountPoints.push(point);
   }
   
-  var DiscountTermStructure = {
-    "Compounding" : discountingCompounding,
-    "DayCounter" : discountingDayCounter,
-    "Interpolator" : discountingInterpolator,
-    
+  for (var i = 0; i < discountingOIS.length; i++){
+    var point ={
+      "type": "OIS",
+      "Rate": discountingOIS[i][0],
+      "TenorTimeUnit": discountingOIS[i][1],
+      "TenorNumber": discountingOIS[i][2],
+      "FixingDays": discountingOIS[i][3],
+      "OvernightIndex": discountingOIS[i][4]
+    }
+    DiscountPoints.push(point);
   }
   
-  var discountData = {
-    "TermStructure": DiscountTermStructure,
-    "Points" : DiscountPoints
+  for (var i = 0; i < discountingDatedOIS.length; i++){
+    var point ={
+      "type": "DatedOIS",
+      "Rate": discountingDatedOIS[i][0],
+      "StartDate": discountingDatedOIS[i][1],
+      "EndDate": discountingDatedOIS[i][2],
+      "OvernightIndex": discountingDatedOIS[i][3]
+    }
+    DiscountPoints.push(point);
   }
   
+  for (var i = 0; i < discountingJumps.length; i++){
+    var jump ={
+      "Date":discountingJumps[i][0],
+      "Rate":discountingJumps[i][1]
+    }
+    discountingJumpsArray.push(jump);
+  }
+  
+  if(discountingJumpsArray.length == 0){
+    var DiscountTermStructure = {
+      "Id":"DiscountingTermStructure",
+      "TermStructure":{
+        "DayCounter" : discountingDayCounter,
+        "Interpolator" : discountingInterpolator,
+        "BootstrapTrait": discountingBootstrapTrait
+      },
+      "Points" : DiscountPoints
+    }
+  }else{
+    var DiscountTermStructure = {
+      "Id":"DiscountingTermStructure",
+      "TermStructure":{
+        "DayCounter" : discountingDayCounter,
+        "Interpolator" : discountingInterpolator,
+        "BootstrapTrait": discountingBootstrapTrait
+      },
+      "Points" : DiscountPoints,
+      "Jumps": discountingJumpsArray
+    }
+  }
   
   var ForecastingPoints = new Array();
+  var fwdJumpsArray = new Array();
   
   for (var i = 0; i < fwdDepositPoints.length; i++){
     var point ={
@@ -170,29 +219,46 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
   
   for (var i = 0; i < fwdFuturePoints.length; i++){
     var point ={
-	    "type": "Future",
-	    "Rate": fwdFuturePoints[i][0],
-	    "FutureStartDate": fwdFuturePoints[i][1],
-	    "FutMonths": fwdFuturePoints[i][2],
-	    "Calendar": fwdFuturePoints[i][3],
-	    "BusinessDayConvention": fwdFuturePoints[i][4],
-	    "DayCounter": fwdFuturePoints[i][5]
+      "type": "Future",
+      "Rate": fwdFuturePoints[i][0],
+      "FutureStartDate": fwdFuturePoints[i][1],
+      "FutMonths": fwdFuturePoints[i][2],
+      "Calendar": fwdFuturePoints[i][3],
+      "BusinessDayConvention": fwdFuturePoints[i][4],
+      "DayCounter": fwdFuturePoints[i][5]
     }
     ForecastingPoints.push(point);
   }
   
   for (var i = 0; i < fwdSwapPoints.length; i++){
-    var point ={
-      "type": "Swap",
-      "Rate": fwdSwapPoints[i][0],
-      "TenorTimeUnit": fwdSwapPoints[i][1],
-      "TenorNumber": fwdSwapPoints[i][2],
-      "Calendar": fwdSwapPoints[i][3],
-      "SwFixedLegFrequency": fwdSwapPoints[i][4],
-      "SwFixedLegConvention": fwdSwapPoints[i][5],
-      "SwFixedLegDayCounter": fwdSwapPoints[i][6],
-      "SwFloatingLegIndex": fwdSwapPoints[i][7],
+    if(fwdSwapPoints[i][8] == true){
+      var point ={
+        "type": "Swap",
+        "Rate": fwdSwapPoints[i][0],
+        "TenorTimeUnit": fwdSwapPoints[i][1],
+        "TenorNumber": fwdSwapPoints[i][2],
+        "Calendar": fwdSwapPoints[i][3],
+        "SwFixedLegFrequency": fwdSwapPoints[i][4],
+        "SwFixedLegConvention": fwdSwapPoints[i][5],
+        "SwFixedLegDayCounter": fwdSwapPoints[i][6],
+        "SwFloatingLegIndex": fwdSwapPoints[i][7],
+        "DiscountingTermStructure":"DiscountingTermStructure"
+      }
+    }else{
+      var point ={
+        "type": "Swap",
+        "Rate": fwdSwapPoints[i][0],
+        "TenorTimeUnit": fwdSwapPoints[i][1],
+        "TenorNumber": fwdSwapPoints[i][2],
+        "Calendar": fwdSwapPoints[i][3],
+        "SwFixedLegFrequency": fwdSwapPoints[i][4],
+        "SwFixedLegConvention": fwdSwapPoints[i][5],
+        "SwFixedLegDayCounter": fwdSwapPoints[i][6],
+        "SwFloatingLegIndex": fwdSwapPoints[i][7]
+      }
     }
+   
+    
     ForecastingPoints.push(point);
   }
   
@@ -218,19 +284,61 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
           "EndOfMonth":fwdBondPoints[i][15]
       }
     }
-    DiscountPoints.push(point);
+    ForecastingPoints.push(point);
   }
   
-  var ForecastingTermStructure = {
-    "Compounding" : fwdCompounding,
-    "DayCounter" : fwdDayCounter,
-    "Interpolator" : fwdInterpolator,
-    
+  for (var i = 0; i < fwdOIS.length; i++){
+    var point ={
+      "type": "OIS",
+      "Rate": fwdOIS[i][0],
+      "TenorTimeUnit": fwdOIS[i][1],
+      "TenorNumber": fwdOIS[i][2],
+      "FixingDays": fwdOIS[i][3],
+      "OvernightIndex": fwdOIS[i][4]
+    }
+    ForecastingPoints.push(point);
   }
   
-  var forecastingData = {
-    "TermStructure": ForecastingTermStructure,
-    "Points" : ForecastingPoints
+  for (var i = 0; i < fwdDatedOIS.length; i++){
+    var point ={
+      "type": "DatedOIS",
+      "Rate": fwdDatedOIS[i][0],
+      "StartDate": fwdDatedOIS[i][1],
+      "EndDate": fwdDatedOIS[i][2],
+      "OvernightIndex": fwdDatedOIS[i][3]
+    }
+    ForecastingPoints.push(point);
+  }
+  
+  for (var i = 0; i < fwdJumps.length; i++){
+    var jump ={
+      "Date":fwdJumps[i][0],
+      "Rate":fwdJumps[i][1]
+    }
+    fwdJumpsArray.push(jump);
+  }
+  
+  if(fwdJumpsArray.length == 0){
+    var ForecastingTermStructure = {
+      "Id":"ForecastingTermStructure",
+      "TermStructure":{
+        "DayCounter" : fwdDayCounter,
+        "Interpolator" : fwdInterpolator,
+        "BootstrapTrait": fwdBootstrapTrait
+      },
+      "Points" : ForecastingPoints
+    }
+  }else{
+    var ForecastingTermStructure = {
+      "Id":"ForecastingTermStructure",
+      "TermStructure":{
+        "DayCounter" : fwdDayCounter,
+        "Interpolator" : fwdInterpolator,
+        "BootstrapTrait": fwdBootstrapTrait
+      },
+      "Points" : ForecastingPoints,
+      "Jumps": fwdJumpsArray
+    }
   }
   
   var fixings = new Array();
@@ -266,8 +374,14 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
     };
   }
   
+  var curves = [];
+  curves[0] = DiscountTermStructure;
+  curves[1] = ForecastingTermStructure;
+  
   var data = {
             "VanillaInterestRateSwap": {
+                "DiscountingTermStructure":"DiscountingTermStructure",
+              "ForecastingTermStructure":"ForecastingTermStructure",
                 "Notional": swapNotional,
                 "SwapType": swapType,
                 "StartDate": swapStartDate,
@@ -300,10 +414,7 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
             "Pricing":{
                 "AsOfDate": pricingAsOfDate,
             },
-            "Curves":{
-                "DiscountingTermStructure": discountData,
-                "ForecastingTermStructure": forecastingData
-             }
+            "Curves": curves
         };
   
   var options = {
@@ -325,11 +436,6 @@ function PRICEVANILLASWAP(discountingDepositPoints, //discounting curve
     var NPVArray = ["NPV",responseArray["NPV"],,,,,,]
     var NFairRateArray = ["FairRate",responseArray["FairRate"],,,,,,]
     var NPVFairSpread = ["FairSpread",responseArray["FairSpread"],,,,,,]
-    /*output = responseArray.map(function(obj) {
-      return Object.keys(obj).map(function(key) { 
-        return obj[key];
-      });
-    });*/
     
     output[0] = NPVArray;
     output[1] = NFairRateArray;
